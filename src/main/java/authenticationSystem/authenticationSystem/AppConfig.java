@@ -1,6 +1,8 @@
 package authenticationSystem.authenticationSystem;
 
 
+import authenticationSystem.authenticationSystem.bcrypt.Bcrypt;
+import authenticationSystem.authenticationSystem.bcrypt.BcryptVersion1;
 import authenticationSystem.authenticationSystem.repository.MemberJpaRepository;
 import authenticationSystem.authenticationSystem.repository.MemberRepository;
 import authenticationSystem.authenticationSystem.service.MemberService;
@@ -28,4 +30,7 @@ public class AppConfig {
     public MemberService memberService(){
         return new MemberService(memberRepository());
     }
+
+    @Bean
+    public Bcrypt bcrypt(){ return new BcryptVersion1();}
 }

@@ -10,7 +10,8 @@
   <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요.">
   <br>
   <label for="password">비밀번호</label>
-  <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요.">
+  <input type="password" id="password" name="password" aria-describedby="passwordHelp" placeholder="비밀번호를 입력하세요.">
+  <small id="passwordHelp" class="form-text text-muted">비밀번호는 특수문자 포함 15자 내로 해주세요.</small>
   <br>
   <label for="authPassword">비밀번호 재입력</label>
   <input type="password" id="authPassword" name="authPassword" placeholder="비밀번호를 다시 입력해주세요.">

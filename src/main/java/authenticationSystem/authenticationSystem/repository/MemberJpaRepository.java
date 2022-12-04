@@ -7,7 +7,6 @@ public class MemberJpaRepository implements MemberRepository {
 
     EntityManager em;
 
-
     public MemberJpaRepository(EntityManager em) {
         this.em = em;
     }

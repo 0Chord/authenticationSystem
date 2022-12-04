@@ -5,5 +5,5 @@ CREATE TABLE member(
     user_nickname varchar(20) not null,
     user_tell varchar(20) not null,
     user_name varchar(10) not null,
-    admin_right bool not null default 0
+    admin_right boolean not null default 0
 );
