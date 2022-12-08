@@ -1,7 +1,6 @@
 package authenticationSystem.authenticationSystem.controller;
 
 import authenticationSystem.authenticationSystem.dto.MemberForm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,10 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping("/signup")
 public class SignupController {
-
     RestTemplate restTemplate;
     HttpHeaders httpHeaders;
 
@@ -34,17 +34,21 @@ public class SignupController {
 
     @PostMapping("/enroll")
     public String enroll(@Validated MemberForm memberForm){
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("userId",memberForm.getUserId());
-        body.add("password", memberForm.getPassword());
-        body.add("authPassword", memberForm.getAuthPassword());
-        body.add("name", memberForm.getName());
-        body.add("nickname", memberForm.getNickname());
-        body.add("phone", memberForm.getPhone());
-        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8081/signup/enroll", requestMessage, String.class);
-        System.out.println("response = " + response);
-        return "redirect:/";
+        if (!Objects.equals(memberForm.getPassword(), memberForm.getAuthPassword())) {
+            httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("userId",memberForm.getUserId());
+            body.add("password", memberForm.getPassword());
+            body.add("authPassword", memberForm.getAuthPassword());
+            body.add("name", memberForm.getName());
+            body.add("nickname", memberForm.getNickname());
+            body.add("phone", memberForm.getPhone());
+
+            HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
+            ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8081/signup/enroll", requestMessage, String.class);
+            return "redirect:/";
+        }//비밀번호 오류 내용 추가 예정
+        return "signup/register";
+
     }
 }
