@@ -1,10 +1,12 @@
 package authenticationSystem.authenticationSystem;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.Duration;
 
 @Configuration
 public class AppConfig {
@@ -12,4 +14,6 @@ public class AppConfig {
     RestTemplate restTemplate(){return new RestTemplate();}
     @Bean
     HttpHeaders httpHeaders(){return new HttpHeaders();}
+
+
 }
