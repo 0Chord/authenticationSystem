@@ -34,7 +34,7 @@ public class SignupController {
 
     @PostMapping("/enroll")
     public String enroll(@Validated MemberForm memberForm){
-        if (!Objects.equals(memberForm.getPassword(), memberForm.getAuthPassword())) {
+        if (Objects.equals(memberForm.getPassword(), memberForm.getAuthPassword())) {
             httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
             MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add("userId",memberForm.getUserId());
@@ -43,9 +43,9 @@ public class SignupController {
             body.add("name", memberForm.getName());
             body.add("nickname", memberForm.getNickname());
             body.add("phone", memberForm.getPhone());
-
             HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
             ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8081/signup/enroll", requestMessage, String.class);
+            System.out.println("response = " + response);
             return "redirect:/";
         }//비밀번호 오류 내용 추가 예정
         return "signup/register";
