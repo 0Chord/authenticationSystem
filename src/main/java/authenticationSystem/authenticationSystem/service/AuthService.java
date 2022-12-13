@@ -67,7 +67,7 @@ public class AuthService {
     public Cookie setAdminCookie(String admin){
         Cookie cookie = new Cookie("admin",admin);
         cookie.setPath("/");
-        cookie.setMaxAge(7*24*60*60);
+        cookie.setMaxAge(24*60*60);
         cookie.setHttpOnly(true);
         return cookie;
     }
@@ -106,5 +106,26 @@ public class AuthService {
         body.add("access","manage");
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(body, httpHeaders);
         return restTemplate.postForEntity("http://localhost:8081/signIn/manage",httpEntity, List.class);
+    }
+
+    public ResponseEntity<?> deleteMember(HttpHeaders httpHeaders, RestTemplate restTemplate, String userId){
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("userId",userId);
+        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
+        return restTemplate.postForEntity("http://localhost:8081/signIn/removeMember", requestMessage, List.class);
+    }
+
+    public ResponseEntity<?> checkAccessToken(String refreshToken, HttpServletResponse httpServletResponse, MultiValueMap<String,String> body){
+
+        if (Objects.equals(refreshToken, "")) {
+            notHaveRefreshToken();
+        }
+
+        if (body.isEmpty()) {
+            setAccessCookieAndSetBody(refreshToken, body, httpServletResponse);
+        }
+
+        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
+        return restTemplate.postForEntity("http://localhost:8081/signIn/auth", requestMessage, Boolean.class);
     }
 }

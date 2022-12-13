@@ -17,10 +17,17 @@
     </thead>
     <tbody>
     <tr th:each="member : ${members}" class="table-success">
-        <td th:text="${member.userId}"></td>
-        <td th:text="${member.nickname}"></td>
-        <td th:text="${member.name}"></td>
-        <td th:text="${member.phone}"></td>
+        <th:block th:if="${member.adminRight != '1'}">
+            <td th:text="${member.userId}"></td>
+            <td th:text="${member.nickname}"></td>
+            <td th:text="${member.name}"></td>
+            <td th:text="${member.phone}"></td>
+            <td>
+                <form th:action="@{/manage/remove/{userId} (userId = ${member.userId})}" method="post">
+                    <button type="submit">계정 삭제</button>
+                </form>
+            </td>
+        </th:block>
     </tr>
     </tbody>
 </table>

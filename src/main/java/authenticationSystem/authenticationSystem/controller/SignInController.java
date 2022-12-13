@@ -23,13 +23,13 @@ import java.util.Objects;
 @Slf4j
 @Controller
 @RequestMapping("/signIn")
-public class signInController {
+public class SignInController {
 
     RestTemplate restTemplate;
     HttpHeaders httpHeaders;
     AuthService authService;
 
-    public signInController(RestTemplate restTemplate, HttpHeaders httpHeaders, AuthService authService) {
+    public SignInController(RestTemplate restTemplate, HttpHeaders httpHeaders, AuthService authService) {
         this.restTemplate = restTemplate;
         this.httpHeaders = httpHeaders;
         this.authService = authService;
@@ -59,36 +59,24 @@ public class signInController {
 
     @GetMapping("/auth")
     public String test(HttpServletRequest request, HttpServletResponse httpServletResponse, Model model) {
+
         Cookie[] cookies = request.getCookies();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-
         if (cookies == null) {
             return "error/accessErrorPage";
         }
-
         String refreshToken = authService.findAccessTokenAndRefreshToken(body, cookies);
         String admin = authService.findAdmin(cookies);
-        if (Objects.equals(refreshToken, "")) {
-            authService.notHaveRefreshToken();
-        }
-
-        if (body.isEmpty()) {
-            authService.setAccessCookieAndSetBody(refreshToken, body, httpServletResponse);
-        }
-
-        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
-        ResponseEntity<Boolean> response = restTemplate.postForEntity("http://localhost:8081/signIn/auth", requestMessage, Boolean.class);
+        ResponseEntity<?> response = authService.checkAccessToken(refreshToken, httpServletResponse, body);
         if (Boolean.TRUE.equals(response.getBody())) {
             if (admin.equals("1")) {
                 ResponseEntity<?> members = authService.getMembers(httpHeaders, restTemplate);
-                System.out.println("members = " + members);
                 model.addAttribute("members",members.getBody());
                 return "signIn/manage";
             } else {
                 ResponseEntity<?> memberInfo = authService.getMemberInfo(refreshToken, httpHeaders, restTemplate);
                 Object member = memberInfo.getBody();
-                System.out.println("member = " + member);
                 model.addAttribute("member",member);
                 return "signIn/private";
             }
