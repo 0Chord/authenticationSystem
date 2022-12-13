@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>개인 유저 페이지</title>
+</head>
+<body>
+<div class="py-5 text-center">
+  <h2 th:text="|${member.nickname}님의 개인 정보 페이지|"></h2>
+</div>
+<table class="table table-hover table-bordered">
+  <tr class="table-warning">
+    <td>아이디</td>
+    <td th:text="${member.userId}"></td>
+  </tr>
+  <tr class="table-primary">
+    <td>이름</td>
+    <td th:text="${member.name}"></td>
+  </tr>
+  <tr class="table-primary">
+    <td>닉네임</td>
+    <td th:text="${member.nickname}"></td>
+  </tr>
+  <tr class="table-primary">
+    <td>전화번호</td>
+    <td th:text="${member.phone}"></td>
+  </tr>
+</table>
+</body>
+</html>

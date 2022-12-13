@@ -35,39 +35,5 @@ public class HomeController {
         return "Home";
     }
 
-    @GetMapping("/test")
-    public String test(HttpServletRequest request, HttpServletResponse httpServletResponse,Model model){
-        Cookie[] cookies = request.getCookies();
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        if(cookies == null){
-            return "error/accessErrorPage";
-        }
-        String refreshToken = "";
-        for(Cookie cookie:cookies){
-            if(Objects.equals(cookie.getName(), "accessToken")){
-                body.add("accessToken",cookie.getValue());
-            }
-            if(Objects.equals(cookie.getName(), "refreshToken")){
-                refreshToken = cookie.getValue();
-            }
-        }
-
-        if(body.isEmpty()){
-            ResponseEntity<?> accessTokenObj = authService.getAccessToken(refreshToken);
-            String accessToken = Objects.requireNonNull(accessTokenObj.getBody()).toString();
-            Cookie cookie = authService.setAccessCookie(accessToken);
-            httpServletResponse.addCookie(cookie);
-            body.add("accessToken",accessToken);
-        }
-        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
-        ResponseEntity<Boolean> response = restTemplate.postForEntity("http://localhost:8081/signIn/auth", requestMessage, Boolean.class);
-        if(Boolean.TRUE.equals(response.getBody())){
-            model.addAttribute("cookies",cookies);
-            return "test";
-        }else{
-            return "Home";
-        }
-    }
 
 }

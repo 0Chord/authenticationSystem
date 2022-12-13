@@ -6,18 +6,21 @@ import authenticationSystem.authenticationSystem.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.Objects;
-
+@Slf4j
 @Controller
 @RequestMapping("/signIn")
 public class signInController {
@@ -33,7 +36,7 @@ public class signInController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Validated LoginForm loginForm, HttpServletResponse httpServletResponse, HttpServletRequest request) {
+    public ResponseEntity<?> login(@Validated LoginForm loginForm, HttpServletResponse httpServletResponse) {
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("userId", loginForm.getId());
@@ -45,12 +48,52 @@ public class signInController {
 
         Cookie refreshCookie = authService.setRefreshCookie(responseBody.getRefreshToken());
         Cookie accessCookie = authService.setAccessCookie(responseBody.getRefreshToken());
-
+        Cookie adminCookie = authService.setAdminCookie(responseBody.getAdmin());
+        httpServletResponse.addCookie(adminCookie);
         httpServletResponse.addCookie(refreshCookie);
         httpServletResponse.addCookie(accessCookie);
         HttpHeaders httpHeaders1 = new HttpHeaders();
-        httpHeaders1.setLocation(URI.create("/test"));
+        httpHeaders1.setLocation(URI.create("/signIn/auth"));
         return new ResponseEntity<>(responseBody, httpHeaders1, HttpStatus.SEE_OTHER);
     }
 
+    @GetMapping("/auth")
+    public String test(HttpServletRequest request, HttpServletResponse httpServletResponse, Model model) {
+        Cookie[] cookies = request.getCookies();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+
+        if (cookies == null) {
+            return "error/accessErrorPage";
+        }
+
+        String refreshToken = authService.findAccessTokenAndRefreshToken(body, cookies);
+        String admin = authService.findAdmin(cookies);
+        if (Objects.equals(refreshToken, "")) {
+            authService.notHaveRefreshToken();
+        }
+
+        if (body.isEmpty()) {
+            authService.setAccessCookieAndSetBody(refreshToken, body, httpServletResponse);
+        }
+
+        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
+        ResponseEntity<Boolean> response = restTemplate.postForEntity("http://localhost:8081/signIn/auth", requestMessage, Boolean.class);
+        if (Boolean.TRUE.equals(response.getBody())) {
+            if (admin.equals("1")) {
+                ResponseEntity<?> members = authService.getMembers(httpHeaders, restTemplate);
+                System.out.println("members = " + members);
+                model.addAttribute("members",members.getBody());
+                return "signIn/manage";
+            } else {
+                ResponseEntity<?> memberInfo = authService.getMemberInfo(refreshToken, httpHeaders, restTemplate);
+                Object member = memberInfo.getBody();
+                System.out.println("member = " + member);
+                model.addAttribute("member",member);
+                return "signIn/private";
+            }
+        } else {
+            return "Home";
+        }
+    }
 }
