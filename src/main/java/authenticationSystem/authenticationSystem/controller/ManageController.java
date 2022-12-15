@@ -46,8 +46,8 @@ public class ManageController {
         }
 
         String refreshToken = authService.findAccessTokenAndRefreshToken(body, cookies);
-        String admin = authService.findAdmin(cookies);
         ResponseEntity<?> response = authService.checkAccessToken(refreshToken, httpServletResponse, body);
+        String admin = authService.findAdmin(httpHeaders, restTemplate, body);
         if (Boolean.TRUE.equals(response.getBody())) {
             if (admin.equals("1")) {
                 ResponseEntity<?> responseEntity = authService.deleteMember(httpHeaders, restTemplate, userId);

@@ -64,14 +64,6 @@ public class AuthService {
         body.add("accessToken",accessToken);
     }
 
-    public Cookie setAdminCookie(String admin){
-        Cookie cookie = new Cookie("admin",admin);
-        cookie.setPath("/");
-        cookie.setMaxAge(24*60*60);
-        cookie.setHttpOnly(true);
-        return cookie;
-    }
-
     public String findAccessTokenAndRefreshToken(MultiValueMap<String, String> body, Cookie[] cookies){
         String refreshToken = "";
         for(Cookie cookie:cookies){
@@ -85,13 +77,10 @@ public class AuthService {
         return refreshToken;
     }
 
-    public String findAdmin(Cookie[] cookies){
-        for(Cookie cookie:cookies){
-            if(Objects.equals(cookie.getName(),"admin")){
-                return cookie.getValue();
-            }
-        }
-        return null;
+    public String findAdmin(HttpHeaders httpHeaders, RestTemplate restTemplate, MultiValueMap<String,String> body){
+        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
+        ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8081/signIn/admin", requestMessage, String.class);
+        return response.getBody();
     }
 
     public ResponseEntity<?> getMemberInfo(String refreshToken, HttpHeaders httpHeaders, RestTemplate restTemplate){

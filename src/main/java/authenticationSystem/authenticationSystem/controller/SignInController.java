@@ -48,8 +48,6 @@ public class SignInController {
 
         Cookie refreshCookie = authService.setRefreshCookie(responseBody.getRefreshToken());
         Cookie accessCookie = authService.setAccessCookie(responseBody.getRefreshToken());
-        Cookie adminCookie = authService.setAdminCookie(responseBody.getAdmin());
-        httpServletResponse.addCookie(adminCookie);
         httpServletResponse.addCookie(refreshCookie);
         httpServletResponse.addCookie(accessCookie);
         HttpHeaders httpHeaders1 = new HttpHeaders();
@@ -59,18 +57,18 @@ public class SignInController {
 
     @GetMapping("/auth")
     public String test(HttpServletRequest request, HttpServletResponse httpServletResponse, Model model) {
-
         Cookie[] cookies = request.getCookies();
+
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         if (cookies == null) {
             return "error/accessErrorPage";
         }
         String refreshToken = authService.findAccessTokenAndRefreshToken(body, cookies);
-        String admin = authService.findAdmin(cookies);
         ResponseEntity<?> response = authService.checkAccessToken(refreshToken, httpServletResponse, body);
+        String admin = authService.findAdmin(httpHeaders, restTemplate, body);
         if (Boolean.TRUE.equals(response.getBody())) {
-            if (admin.equals("1")) {
+            if (admin.equals("ROLE_ADMIN")) {
                 ResponseEntity<?> members = authService.getMembers(httpHeaders, restTemplate);
                 model.addAttribute("members",members.getBody());
                 return "signIn/manage";
