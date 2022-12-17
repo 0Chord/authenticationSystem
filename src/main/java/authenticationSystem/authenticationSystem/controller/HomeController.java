@@ -1,5 +1,6 @@
 package authenticationSystem.authenticationSystem.controller;
 
+import authenticationSystem.authenticationSystem.dto.LoginForm;
 import authenticationSystem.authenticationSystem.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Objects;
@@ -31,7 +33,7 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(){
+    public String home(@ModelAttribute LoginForm loginForm){
         return "Home";
     }
 

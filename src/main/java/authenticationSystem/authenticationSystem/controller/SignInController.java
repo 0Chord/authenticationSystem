@@ -42,17 +42,24 @@ public class SignInController {
         body.add("userId", loginForm.getId());
         body.add("password", loginForm.getPassword());
         HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
-        ResponseEntity<JwtForm> response = restTemplate.postForEntity("http://localhost:8081/signIn/login", requestMessage, JwtForm.class);
-        JwtForm responseBody = response.getBody();
-        assert responseBody != null;
+        try{
+            ResponseEntity<JwtForm> response = restTemplate.postForEntity("http://localhost:8081/signIn/login", requestMessage, JwtForm.class);
+            JwtForm responseBody = response.getBody();
+            assert responseBody != null;
 
-        Cookie refreshCookie = authService.setRefreshCookie(responseBody.getRefreshToken());
-        Cookie accessCookie = authService.setAccessCookie(responseBody.getRefreshToken());
-        httpServletResponse.addCookie(refreshCookie);
-        httpServletResponse.addCookie(accessCookie);
-        HttpHeaders httpHeaders1 = new HttpHeaders();
-        httpHeaders1.setLocation(URI.create("/signIn/auth"));
-        return new ResponseEntity<>(responseBody, httpHeaders1, HttpStatus.SEE_OTHER);
+            Cookie refreshCookie = authService.setRefreshCookie(responseBody.getRefreshToken());
+            Cookie accessCookie = authService.setAccessCookie(responseBody.getRefreshToken());
+            httpServletResponse.addCookie(refreshCookie);
+            httpServletResponse.addCookie(accessCookie);
+            HttpHeaders httpHeaders1 = new HttpHeaders();
+            httpHeaders1.setLocation(URI.create("/signIn/auth"));
+            return new ResponseEntity<>(responseBody, httpHeaders1, HttpStatus.SEE_OTHER);
+        }catch(Exception e){
+            HttpHeaders httpHeaders1 = new HttpHeaders();
+            httpHeaders1.setLocation(URI.create("/Home"));
+            return new ResponseEntity<>("loginError",httpHeaders1,HttpStatus.SEE_OTHER);
+        }
+
     }
 
     @GetMapping("/auth")
@@ -65,21 +72,21 @@ public class SignInController {
             return "error/accessErrorPage";
         }
         String refreshToken = authService.findAccessTokenAndRefreshToken(body, cookies);
-        ResponseEntity<?> response = authService.checkAccessToken(refreshToken, httpServletResponse, body);
-        String admin = authService.findAdmin(httpHeaders, restTemplate, body);
-        if (Boolean.TRUE.equals(response.getBody())) {
-            if (admin.equals("ROLE_ADMIN")) {
-                ResponseEntity<?> members = authService.getMembers(httpHeaders, restTemplate);
-                model.addAttribute("members",members.getBody());
-                return "signIn/manage";
+            ResponseEntity<?> response = authService.checkAccessToken(refreshToken, httpServletResponse, body);
+            String admin = authService.findAdmin(httpHeaders, restTemplate, body);
+            if (Boolean.TRUE.equals(response.getBody())) {
+                if (admin.equals("ROLE_ADMIN")) {
+                    ResponseEntity<?> members = authService.getMembers(httpHeaders, restTemplate);
+                    model.addAttribute("members",members.getBody());
+                    return "signIn/manage";
+                } else {
+                    ResponseEntity<?> memberInfo = authService.getMemberInfo(refreshToken, httpHeaders, restTemplate);
+                    Object member = memberInfo.getBody();
+                    model.addAttribute("member",member);
+                    return "signIn/private";
+                }
             } else {
-                ResponseEntity<?> memberInfo = authService.getMemberInfo(refreshToken, httpHeaders, restTemplate);
-                Object member = memberInfo.getBody();
-                model.addAttribute("member",member);
-                return "signIn/private";
+                return "Home";
             }
-        } else {
-            return "Home";
-        }
     }
 }
