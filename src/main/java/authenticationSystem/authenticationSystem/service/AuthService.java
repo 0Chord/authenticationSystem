@@ -104,6 +104,12 @@ public class AuthService {
         return restTemplate.postForEntity("http://localhost:8081/signIn/removeMember", requestMessage, List.class);
     }
 
+    public ResponseEntity<?> mailAuth(HttpHeaders httpHeaders, RestTemplate restTemplate, String userId){
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("userId",userId);
+        HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
+        return restTemplate.postForEntity("http://localhost:8081/signIn/mailAuth",requestMessage,String.class);
+    }
     public ResponseEntity<?> checkAccessToken(String refreshToken, HttpServletResponse httpServletResponse, MultiValueMap<String,String> body){
 
         if (Objects.equals(refreshToken, "")) {

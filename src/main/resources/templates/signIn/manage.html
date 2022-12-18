@@ -17,7 +17,7 @@
     </thead>
     <tbody>
     <tr th:each="member : ${members}" class="table-success">
-        <th:block th:if="${member.adminRight != 'MANAGER'}">
+        <th:block th:if="${member.adminRight != 'ADMIN'}">
             <td th:text="${member.userId}"></td>
             <td th:text="${member.nickname}"></td>
             <td th:text="${member.name}"></td>

@@ -12,27 +12,42 @@
 </head>
 <body>
 <h2>회원가입</h2>
-<form action="/signup/enroll" th:object="${memberForm}" method="post">
-  <label for="userId">아이디</label>
-  <input type="text" id="userId" name="userId" placeholder="아이디를 입력하세요.">
-  <br>
-  <label for="password">비밀번호</label>
-  <input type="password" id="password" name="password" aria-describedby="passwordHelp" placeholder="비밀번호를 입력하세요.">
-  <br>
-  <small id="passwordHelp" class="form-text text-muted">비밀번호는 특수문자 포함 15자 내로 해주세요.</small>
-  <br>
+<form action="/signup/register" th:object="${memberForm}" method="post">
+  <div>
+    <label for="userId">아이디</label>
+    <input type="text" th:field="*{userId}" th:errorclass="field-error" id="userId" name="userId" aria-describedby="idHelp" placeholder="ex)example@smilegate.com">
+    <div class="field-error" th:errors="*{userId}"/>
+    <br>
+    <small id="idHelp">이메일 형식으로 가입해주세요.</small>
+  </div>
+  <div>
+    <label for="password">비밀번호</label>
+    <input type="password" id="password" name="password" th:field="*{password}" th:errorclass="field-error" aria-describedby="passwordHelp" placeholder="비밀번호를 입력하세요.">
+    <div class="field-error" th:errors="*{password}"/>
+    <br>
+    <small id="passwordHelp" class="form-text text-muted">비밀번호는 최소 하나의 문자, 숫자, 특수문자 포함 10자 이상 20자 이하로 해주세요.</small>
+  </div>
   <label for="authPassword">비밀번호 재입력</label>
   <input type="password" id="authPassword" name="authPassword" placeholder="비밀번호를 다시 입력해주세요.">
   <br>
-  <label for="nickname">닉네임</label>
-  <input type="text" id="nickname" name="nickname" placeholder="닉네임을 입력해주세요.">
-  <br>
-  <label for="name">이름</label>
-  <input type="text" id="name" name="name" placeholder="이름을 입력해주세요.">
-  <br>
-  <label for="phone">전화번호</label>
-  <input type="text" id="phone" name="phone" placeholder="전화번호를 입력해주세요.">
-  <br>
+  <div>
+    <label for="nickname">닉네임</label>
+    <input type="text" id="nickname" name="nickname" placeholder="닉네임을 입력해주세요.">
+  </div>
+  <div>
+    <label for="name">이름</label>
+    <input type="text" id="name" name="name" placeholder="이름을 입력해주세요.">
+  </div>
+  <div>
+    <label for="phone">전화번호</label>
+    <input th:field="*{phone}" th:errorclass="field-error" type="text" aria-describedby="phoneHelp" id="phone" name="phone" placeholder="전화번호를 입력해주세요.">
+    <div class="field-error" th:errors="*{phone}"/>
+    <br>
+    <small id="phoneHelp">전화번호 하이픈 - 을 넣어서 기입해주세요.</small>
+  </div>
+  <div th:if="${#fields.globalErrors()}">
+    <p class="field-error" th:each="err:${#fields.globalErrors()}" th:text="${err}"></p>
+  </div>
   <button type="submit" class="btn btn-lg">회원가입</button>
 </form>
 </body>

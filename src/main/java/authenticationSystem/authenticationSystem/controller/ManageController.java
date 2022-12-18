@@ -49,11 +49,16 @@ public class ManageController {
         ResponseEntity<?> response = authService.checkAccessToken(refreshToken, httpServletResponse, body);
         String admin = authService.findAdmin(httpHeaders, restTemplate, body);
         if (Boolean.TRUE.equals(response.getBody())) {
-            if (admin.equals("1")) {
-                ResponseEntity<?> responseEntity = authService.deleteMember(httpHeaders, restTemplate, userId);
-                Object members = responseEntity.getBody();
-                model.addAttribute("members",members);
-                return "signIn/manage";
+            if (admin.equals("ROLE_ADMIN")) {
+                try{
+                    ResponseEntity<?> responseEntity = authService.deleteMember(httpHeaders, restTemplate, userId);
+                    Object members = responseEntity.getBody();
+                    model.addAttribute("members",members);
+                    return "signIn/manage";
+                }catch(Exception e){
+                    return "signIn/manage";
+                }
+
             } else {
                 ResponseEntity<?> memberInfo = authService.getMemberInfo(refreshToken, httpHeaders, restTemplate);
                 Object member = memberInfo.getBody();
