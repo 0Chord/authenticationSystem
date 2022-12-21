@@ -6,7 +6,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +32,13 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String home(@ModelAttribute LoginForm loginForm){
-        return "Home";
+    public String home(@ModelAttribute LoginForm loginForm,HttpServletRequest request, HttpServletResponse httpServletResponse, Model model){
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies == null) {
+            return "Home";
+        }
+        return authService.userAuth(httpHeaders, restTemplate, httpServletResponse, request, model, cookies);
     }
 
 

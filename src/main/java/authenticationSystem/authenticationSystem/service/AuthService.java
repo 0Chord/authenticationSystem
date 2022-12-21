@@ -2,12 +2,14 @@ package authenticationSystem.authenticationSystem.service;
 
 import authenticationSystem.authenticationSystem.dto.MemberDto;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -130,5 +132,28 @@ public class AuthService {
 
         HttpEntity<MultiValueMap<String, String>> requestMessage = new HttpEntity<>(body, httpHeaders);
         return restTemplate.postForEntity("http://localhost:8081/signIn/auth", requestMessage, Boolean.class);
+    }
+
+    public String userAuth(HttpHeaders httpHeaders, RestTemplate restTemplate, HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest, Model model, Cookie[] cookies){
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+
+        String refreshToken = findAccessTokenAndRefreshToken(body, cookies);
+        ResponseEntity<?> response = checkAccessToken(refreshToken, httpServletResponse, body);
+        String admin = findAdmin(httpHeaders, restTemplate, body);
+        if (Boolean.TRUE.equals(response.getBody())) {
+            if (admin.equals("ROLE_ADMIN")) {
+                ResponseEntity<?> members = getMembers(httpHeaders, restTemplate);
+                model.addAttribute("members", members.getBody());
+                return "signIn/manage";
+            } else {
+                ResponseEntity<?> memberInfo = getMemberInfo(refreshToken, httpHeaders, restTemplate);
+                Object member = memberInfo.getBody();
+                model.addAttribute("member", member);
+                return "signIn/private";
+            }
+        } else {
+            return "Home";
+        }
     }
 }

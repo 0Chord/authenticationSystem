@@ -68,29 +68,11 @@ public class SignInController {
     @GetMapping("/auth")
     public String test(HttpServletRequest request, HttpServletResponse httpServletResponse, Model model) {
         Cookie[] cookies = request.getCookies();
-
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         if (cookies == null) {
             return "error/accessErrorPage";
         }
-        String refreshToken = authService.findAccessTokenAndRefreshToken(body, cookies);
-        ResponseEntity<?> response = authService.checkAccessToken(refreshToken, httpServletResponse, body);
-        String admin = authService.findAdmin(httpHeaders, restTemplate, body);
-        if (Boolean.TRUE.equals(response.getBody())) {
-            if (admin.equals("ROLE_ADMIN")) {
-                ResponseEntity<?> members = authService.getMembers(httpHeaders, restTemplate);
-                model.addAttribute("members", members.getBody());
-                return "signIn/manage";
-            } else {
-                ResponseEntity<?> memberInfo = authService.getMemberInfo(refreshToken, httpHeaders, restTemplate);
-                Object member = memberInfo.getBody();
-                model.addAttribute("member", member);
-                return "signIn/private";
-            }
-        } else {
-            return "Home";
-        }
+
+        return authService.userAuth(httpHeaders, restTemplate, httpServletResponse, request, model, cookies);
     }
 
     @GetMapping("/confirmLogin")
@@ -152,5 +134,18 @@ public class SignInController {
         }catch(Exception e){
             return "error/searchErrorPage";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response){
+        Cookie[] cookies = request.getCookies();
+
+        for(Cookie cookie: cookies){
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+
+            response.addCookie(cookie);
+        }
+        return "redirect:/";
     }
 }
