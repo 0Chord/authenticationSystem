@@ -2,15 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/signup.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/login.css">
     <title>이메일 인증</title>
 </head>
 <body>
-<h1>방금 가입한 이메일에 인증번호를 보냈습니다.</h1>
-<form action="/signup/mailAuth" method="post">
-    <input type="hidden" id="userId" th:name="userId" th:value="${userId}">
-    <label for="mailAuth">인증번호</label>
-    <input type="text" id="mailAuth" name="mailAuth" placeholder="인증번호를 입력해주세요.">
-    <button type="submit">인증</button>
-</form>
+<div class="contentsWrap">
+    <form action="/signup/mailAuth" method="post">
+        <div class="loginWindow">
+            <img alt="" src="../img/instagramLogo.png">
+            <h1 class="font_color">방금 가입한 이메일에 인증번호를 보냈습니다.</h1>
+            <input type="hidden" id="userId" th:name="userId" th:value="${userId}">
+            <input type="text" id="mailAuth" name="mailAuth" placeholder="인증번호" class="inlineToBlock">
+            <button type="submit" class="inlineToBlock ordinaryLogin activatedLoginColor">인증</button>
+        </div>
+    </form>
+</div>
+
 </body>
 </html>

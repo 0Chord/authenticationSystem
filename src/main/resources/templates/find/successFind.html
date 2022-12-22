@@ -2,13 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="../css/signup.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/login.css">
     <title>비밀번호 찾기</title>
 </head>
 <body>
-<h1>임시비밀번호를 가입하신 이메일에 보내드렸습니다.</h1>
-<h1>임시비밀번호로 재로그인 바랍니다.</h1>
-<form action="/find/success" method="get">
-  <button type="submit">로그인 하러 가기</button>
-</form>
+<div class="contentsWrap">
+    <form action="/find/success" method="get">
+        <div class="loginWindow">
+            <img alt="" src="../img/instagramLogo.png">
+            <h3>임시비밀번호를 가입하신 이메일에 보내드렸습니다.</h3>
+            <h3 class="font_password">임시비밀번호로 재로그인 바랍니다.</h3>
+            <button class="inlineToBlock ordinaryLogin activatedLoginColor" type="submit">로그인으로 돌아가기</button>
+        </div>
+    </form>
+</div>
+
 </body>
 </html>

@@ -1,36 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>유저 관리 페이지</title>
+    <link rel="stylesheet" href="../css/signup.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/update.css">
 </head>
 <body>
-<h1>유저 관리 페이지 입니다.</h1>
-<table class="table table-hover table-bordered">
-    <thead>
-    <tr>
-        <th scope="col">아이디</th>
-        <th scope="col">닉네임</th>
-        <th scope="col">이름</th>
-        <th scope="col">전화번호</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="member : ${members}" class="table-success">
-        <th:block th:if="${member.adminRight != 'ADMIN'}">
-            <td th:text="${member.userId}"></td>
-            <td th:text="${member.nickname}"></td>
-            <td th:text="${member.name}"></td>
-            <td th:text="${member.phone}"></td>
-            <td>
-                <form th:action="@{/manage/remove/{userId} (userId = ${member.userId})}" method="post">
-                    <button type="submit">계정 삭제</button>
-                </form>
-            </td>
-        </th:block>
-    </tr>
-    </tbody>
-</table>
-<button onclick="location.href='/signIn/logout'">로그아웃</button>
+<main class="main">
+    <section class="setting-container">
+        <article class="setting__content">
+            <img alt="" src="../img/instagramLogo.png" style="width:200px; margin:auto">
+            <div class="content-item__01">
+                <h1 class="font_color item__username">유저 관리 페이지</h1>
+            </div>
+            <table>
+                <thead>
+                <tr>
+                    <th class="font_color">아이디</th>
+                    <th class="font_color">닉네임</th>
+                    <th class="font_color">이름</th>
+                    <th class="font_color">전화번호</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="member : ${members}" class="table-success">
+                    <th:block th:if="${member.adminRight != 'ADMIN'}">
+                        <td class="font_manage" th:text="${member.userId}"></td>
+                        <td class="font_manage" th:text="${member.nickname}"></td>
+                        <td th:text="${member.name}" class="font_manage"></td>
+                        <td class="font_manage" th:text="${member.phone}"></td>
+                        <td>
+
+                            <form th:action="@{/manage/remove/{userId} (userId = ${member.userId})}" method="post">
+                                <div class="content-item__11">
+                                    <button class="inlineToBlock ordinaryLogin activatedLoginColor"
+                                            type="submit">계정 삭제
+                                    </button>
+                                </div>
+                            </form>
+                        </td>
+                    </th:block>
+                </tr>
+                </tbody>
+            </table>
+            <div class="content-item__11">
+                <div class="item__input">
+                    <button class="inlineToBlock ordinaryLogin activatedLoginColor"
+                            onclick="location.href='/signIn/logout'">로그아웃
+                    </button>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
 </body>
 </html>

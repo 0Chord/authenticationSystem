@@ -2,32 +2,76 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>개인 유저 페이지</title>
+    <link rel="stylesheet" href="../css/signup.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/profile.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/update.css">
 </head>
 <body>
-<div class="py-5 text-center">
-  <h2 th:text="|${member.nickname}님의 개인 정보 페이지|"></h2>
-</div>
-<table class="table table-hover table-bordered">
-  <tr class="table-warning">
-    <td>아이디</td>
-    <td th:text="${member.userId}"></td>
-  </tr>
-  <tr class="table-primary">
-    <td>이름</td>
-    <td th:text="${member.name}"></td>
-  </tr>
-  <tr class="table-primary">
-    <td>닉네임</td>
-    <td th:text="${member.nickname}"></td>
-  </tr>
-  <tr class="table-primary">
-    <td>전화번호</td>
-    <td th:text="${member.phone}"></td>
-  </tr>
-</table>
-<button onclick="location.href='/signIn/confirmLogin'">비밀번호 변경</button>
-<br>
-<button onclick="location.href='/signIn/logout'">로그아웃</button>
+<main class="main">
+    <section class="setting-container">
+        <article class="setting__content">
+            <img alt="" src="../img/instagramLogo.png" style="width:200px; margin:auto">
+            <div class="content-item__01">
+                <div class="item__img">
+                    <img alt="" src="../img/default_profile.png"/>
+                </div>
+                <div class="item__username">
+                    <h2 th:text="${member.userId}"></h2>
+                </div>
+            </div>
+            <div class="content-item__01">
+                <div class="item__title">아이디</div>
+                <div class="item__input">
+                    <input class="input_update" type="text" placeholder="이메일" th:value="${member.userId}"
+                           readonly="readonly"/>
+                </div>
+            </div>
+            <br>
+            <div class="content-item__01">
+                <div class="item__title">이름</div>
+                <div class="item__input">
+                    <input class="input_update" type="text" placeholder="이름" th:value="${member.name}"
+                           readonly="readonly"/>
+                </div>
+            </div>
+            <br>
+            <div class="content-item__01">
+                <div class="item__title">닉네임</div>
+                <div class="item__input">
+                    <input class="input_update" type="text" placeholder="닉네임" th:value="${member.nickname}"
+                           readonly="readonly"/>
+                </div>
+            </div>
+            <br>
+            <div class="content-item__01">
+                <div class="item__title">전화번호</div>
+                <div class="item__input">
+                    <input class="input_update" type="text" placeholder="전화번호" th:value="${member.phone}"
+                           readonly="readonly"/>
+                </div>
+            </div>
+            <br>
+            <div class="content-item__11">
+                <div class="item__input">
+                    <button class="inlineToBlock ordinaryLogin activatedLoginColor"
+                            onclick="location.href='/signIn/confirmLogin'">비밀번호 변경
+                    </button>
+                </div>
+            </div>
+            <div class="content-item__11">
+                <div class="item__input">
+                    <button class="inlineToBlock ordinaryLogin activatedLoginColor"
+                            onclick="location.href='/signIn/logout'">로그아웃
+                    </button>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
 </body>
 </html>

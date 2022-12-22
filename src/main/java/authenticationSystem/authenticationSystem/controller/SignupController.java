@@ -95,6 +95,7 @@ public class SignupController {
             ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:8081/signup/confirmCode", requestMessage, String.class);
             return "redirect:/";
         }catch(Exception e){
+            restTemplate.postForEntity("http://localhost:8081/signup/signupError",requestMessage,Boolean.class);
             return "error/signupErrorPage";
         }
 
